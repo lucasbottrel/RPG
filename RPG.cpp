@@ -1383,7 +1383,7 @@ int turnos = 1;
 int main(){
 
     int escolha = 0;
-    cout << "x---------------------------------------------x\n|             RPG POR TURNOS                  |\n|        by Athos Geraldo e Luiz Motta        |\nx---------------------------------------------x";
+    cout << "x---------------------------------------------x\n|             RPG POR TURNOS                  |\n|        by Lucas Bottrel        |\nx---------------------------------------------x";
     Personagem *player1;
     Personagem *player2;
 
