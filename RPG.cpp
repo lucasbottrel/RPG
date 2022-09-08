@@ -92,19 +92,19 @@ class Personagem{
         virtual void GarraLetal(){
             danoMinimo = 100;
             danoMaximo = 300;
-            arma = "GarraLetal";
+            arma = "Garra Letal";
         }
 
         virtual void TridenteSagrado(){
             danoMinimo = 220;
             danoMaximo = 420;
-            arma = "TridenteSagrado";
+            arma = "Tridente Sagrado";
         }
 
         virtual void EspadaBarroca(){
             danoMinimo = 300;
             danoMaximo = 500;
-            arma = "EspadaBarroca";
+            arma = "Espada Barroca";
         }
 
         virtual void Porrete(){
@@ -128,7 +128,7 @@ class Personagem{
         virtual void EsferaDeAtaque(){
             danoMinimo = 200;
             danoMaximo = 400;
-            arma = "EspadaLendaria";
+            arma = "Esfera de Ataque";
         }
 
         virtual int EspadaLendaria(){};
