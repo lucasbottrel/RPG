@@ -7,20 +7,14 @@ import java.net.SocketException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-/**
- * Aplicação servidora de chat utilizando a classe {@link ServerSocket}, 
- * que permite apenas requisições bloqueantes (blocking).
- *
- * @author Manoel Campos da Silva Filho
- */
 public class Servidor {
     /**
      * Porta na qual o servidor vai ficar escutando (aguardando conexões dos clientes).
-     * Em um determinado computador só pode haver uma única aplicação servidora
-     * escutando em uma porta específica.
      */
     public static final int PORT = 4000;
+    public int BOSS = 10000;
 
     /**
      * Objeto que permite ao servidor ficar escutando na porta especificada acima.
@@ -36,9 +30,14 @@ public class Servidor {
         clientSocketList = new LinkedList<>();
     }
 
+    public static int random(int min, int max) // range : [min, max]
+    {
+        Random random = new Random();
+        return random.nextInt(max + 1 - min) + min;
+    }
+
     /**
-     * Executa a aplicação servidora que fica em loop infinito aguardando conexões
-     * dos clientes.
+     * Executa a aplicação servidora que fica aguardando conexões dos clientes.
      * @param args parâmetros de linha de comando (não usados para esta aplicação)
      */
     public static void main(String[] args) {
@@ -52,40 +51,32 @@ public class Servidor {
 
     /**
      * Inicia a aplicação, criando um socket para o servidor
-     * ficar escutando na porta {@link #PORT}.
+     * ficar escutando na porta
      * 
-     * @throws IOException quando um erro de I/O (Input/Output, ou seja, Entrada/Saída) ocorrer,
-     *                     como quando o servidor tentar iniciar mas a porta que ele deseja
-     *                     escutar já estiver em uso
+     * @throws IOException quando um erro de I/O (Input/Output) ocorrer
      */
     private void start() throws IOException {
         serverSocket = new ServerSocket(PORT);
         System.out.println(
-                "Servidor de chat bloqueante iniciado no endereço " + serverSocket.getInetAddress().getHostAddress() +
-                " e porta " + PORT);
+                "\n|------------------ RPG server ------------------|\n\nServidor de RPG iniciado no endereço [" + serverSocket.getInetAddress().getHostAddress() +
+                "] e porta [" + PORT + "]");
         clientConnectionLoop();
     }
 
     /**
-     * Inicia o loop infinito de espera por conexões dos clientes. Cada vez que um
-     * cliente conecta, uma {@link Thread} é criada para executar o método
-     * {@link #clientMessageLoop(com.manoelcampos.chat.ClientSocket)} que ficará
-     * esperando mensagens do cliente.
+     * Inicia o loop infinito de espera por conexões dos clientes
      * 
-     * @throws IOException quando um erro de I/O (Input/Output, ou seja,
-     *                     Entrada/Saída) ocorrer, como quando o servidor tentar
-     *                     aceitar a conexão de um cliente, mas ele desconectar
-     *                     antes disso (porque a conexão dele ou do servidor cairam, por exemplo)
+     * @throws IOException quando um erro de I/O (Input/Output) ocorrer
      */
     private void clientConnectionLoop() throws IOException {
         try {
             while (true) {
-                System.out.println("Aguardando conexão de novo cliente");
+                System.out.println("\n(?) Aguardando conexão de novo jogador ...");
                 
                 final ClientSocket clientSocket;
                 try {
                     clientSocket = new ClientSocket(serverSocket.accept());
-                    System.out.println("Cliente " + clientSocket.getRemoteSocketAddress() + " conectado");
+                    System.out.println("\n(!) Jogador " + clientSocket.getRemoteSocketAddress() + " conectado!");
                 }catch(SocketException e){
                     System.err.println("Erro ao aceitar conexão do cliente. O servidor possivelmente está sobrecarregado:");
                     System.err.println(e.getMessage());
@@ -93,8 +84,7 @@ public class Servidor {
                 }
 
                 /*
-                Cria uma nova Thread para permitir que o servidor não fique bloqueado enquanto
-                atende às requisições de um único cliente.
+                Cria uma nova Thread para permitir que o servidor não fique bloqueado enquanto atende às requisições de um único cliente.
                 */
                 try {
                     new Thread(() -> clientMessageLoop(clientSocket)).start();
@@ -117,7 +107,6 @@ public class Servidor {
      * Método executado sempre que um cliente conectar ao servidor.
      * O método fica em loop aguardando mensagens do cliente,
      * até que este desconecte.
-     * A primeira mensagem que o servidor receber após um cliente conectar é o login enviado pelo cliente.
      * 
      * @param clientSocket socket do cliente, por meio do qual o servidor
      *                     pode se comunicar com ele.
@@ -133,15 +122,36 @@ public class Servidor {
 
                 if(clientSocket.getLogin() == null){
                     clientSocket.setLogin(msg);
-                    System.out.println("Cliente "+ clientIP + " logado como " + clientSocket.getLogin() +".");
-                    msg = "Cliente " + clientSocket.getLogin() + " logado.";
+                    System.out.println("*\nNOVO JOGADOR!* ("+ clientIP + ") - BOA SORTE, " + clientSocket.getLogin() +"!");
+                    msg = "\n=> O heroi " + clientSocket.getLogin() + " se juntou a batalha!";
                 }
                 else {
-                    System.out.println("Mensagem recebida de "+ clientSocket.getLogin() +": " + msg);
-                    msg = clientSocket.getLogin() + " diz: " + msg;
+                    System.out.println("(+) Acao recebida de "+ clientSocket.getLogin() +": " + msg);
+
+                    int danoCausado = Integer.parseInt(msg.split(";")[0]);
+                    String player = msg.split(";")[1];
+
+                    this.BOSS -= danoCausado;
+
+                    msg = "(ATAQUE) " + danoCausado + " de dano causado ao BOSS por " + player + "! "+ "\n\n[+] VIDA BOSS: " + BOSS;
+
+                    boolean chanceCura = Global.random(0, 100) < 40;
+                    if (chanceCura){
+                        int cura = Global.random(0,1000);
+                        BOSS += cura;
+                        sendMsgToAll(clientSocket, "[HP] ++ O BOSS CUROU " + cura + "!");
+                    }
+
                 };
 
                 sendMsgToAll(clientSocket, msg);
+
+                if(BOSS <= 0) {
+                    sendMsgToAll(clientSocket, "x-----------------------------------x\n" + "|     BOSS DERROTADO! PARABENS!     |\n" + "x-----------------------------------x\n");
+                    sendMsgToAll(clientSocket, "Obrigado por Jogar! Voce sera DESCONECTADO.");
+                    stop();
+                    System.exit(0);
+                }
             }
         } finally {
             clientSocket.close();
@@ -151,24 +161,13 @@ public class Servidor {
     /**
      * Encaminha uma mensagem recebida de um determinado cliente
      * para todos os outros clientes conectados.
-     *
-     * <p>
-     * Usa um iterator para permitir percorrer a lista de clientes conectados.
-     * Neste caso não é usado um for pois, como estamos removendo um cliente
-     * da lista caso não consigamos enviar mensagem pra ele (pois ele já
-     * desconectou), se fizermos isso usando um foreach, ocorrerá
-     * erro em tempo de execução. Um foreach não permite percorrer e modificar
-     * uma lista ao mesmo tempo. Assim, a forma mais segura de fazer
-     * isso é com um iterator.
-     * </p>
      * 
      * @param sender cliente que enviou a mensagem
-     * @param msg mensagem recebida. Exemplo de mensagem: "Olá pessoal"
+     * @param msg mensagem recebida. 
      */
     private void sendMsgToAll(final ClientSocket sender, final String msg) {
+       
         final Iterator<ClientSocket> iterator = clientSocketList.iterator();
-        int count = 0;
-        
         /*Percorre a lista usando o iterator enquanto existir um próxima elemento (hasNext)
         para processar, ou seja, enquanto não percorrer a lista inteira.*/
         while (iterator.hasNext()) {
@@ -176,22 +175,21 @@ public class Servidor {
             final ClientSocket client = iterator.next();
             /*Verifica se o elemento atual da lista (cliente) não é o cliente que enviou a mensagem.
             Se não for, encaminha a mensagem pra tal cliente.*/
-            if (!client.equals(sender)) {
-                if(client.sendMsg(msg))
-                    count++;
+
+                if(client.sendMsg(msg)){}
                 else iterator.remove();
-            }
         }
-        System.out.println("Mensagem encaminhada para " + count + " clientes");
     }
 
     /**
      * Fecha o socket do servidor quando a aplicação estiver sendo finalizada.
      */
-    private void stop()  {
+    public void stop()  {
         try {
+            System.out.println(">> BOSS DERROTADO!");
             System.out.println("Finalizando servidor");
             serverSocket.close();
+            
         } catch (IOException e) {
             System.err.println("Erro ao fechar socket do servidor: " + e.getMessage());
         }

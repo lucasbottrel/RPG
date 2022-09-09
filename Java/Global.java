@@ -3,9 +3,9 @@ import java.util.*;
 
 public class Global {
     public static Scanner scanner = new Scanner(System.in);
-    public static String jogador1 = "VINI";
-    public static String jogador2 = "BOTTREL";
-    public static String jogador3 = "TIO MARQUIN";
+    public static String jogador1 = "";
+    public static String jogador2 = "";
+    public static String jogador3 = "";
 
     public static int random(int min, int max) // range : [min, max]
     {

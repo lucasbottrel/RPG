@@ -4,7 +4,7 @@ public class Guerreiro extends Personagem {
 
     public Guerreiro() {
         super.setClasse("Guerreiro");
-        super.setPontosDeVida(4000);
+        super.setPontosDeVida(4000); 
         super.setPontosDeMana(30);
         super.setManaMaxima(30);
         super.setForcaFisica(100);
