@@ -1,5 +1,11 @@
-## RPG EM TURNOS ##
+## RPG COM SERVIDOR E MÚLTIPLAS THREADS ##
 
-Implementação de um RPG em turnos com 3 players
+### Developed by:
+###### @author Lucas Bottrel Lopes de Moura
+###### @author Vinícius Silva Mendes
 
-Desenvolvido em C++ e em Java.
+##### Languages (2 versions): C++ && Java.
+---
+
+Implementação de um RPG com múltiplos players conectados num servidor previamente configurado na porta 4000 e ip local.
+
