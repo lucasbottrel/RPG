@@ -188,7 +188,7 @@ public class Cliente implements Runnable {
     }
 
     /**
-     * Endereço IP ou nome DNS para conectar no servidor.
+     * EndereCo IP ou nome DNS para conectar no servidor.
      */
     public static final String SERVER_ADDRESS = "127.0.0.1";
 
@@ -200,12 +200,12 @@ public class Cliente implements Runnable {
     private ClientSocket clientSocket;
     
     /**
-     * Executa a aplicação cliente.
+     * Executa a aplicaCao cliente.
      * Pode-se executar quantas instâncias desta classe desejar.
-     * Isto permite ter vários clientes conectados e interagindo
+     * Isto permite ter varios clientes conectados e interagindo
      * por meio do servidor.
      * 
-     * @param args parâmetros de linha de comando (não usados para esta aplicação)
+     * @param args parâmetros de linha de comando (nao usados para esta aplicaCao)
      */
     public static void main(String[] args) {
         try {
@@ -217,7 +217,7 @@ public class Cliente implements Runnable {
     }
     
     /**
-     * Instancia um cliente, realizando o mínimo de operações necessárias.
+     * Instancia um cliente, realizando o mínimo de operacoes necessarias.
      */
     public Cliente(){
         scanner = new Scanner(System.in);
@@ -231,7 +231,7 @@ public class Cliente implements Runnable {
         final Socket socket = new Socket(SERVER_ADDRESS, Servidor.PORT);
         clientSocket = new ClientSocket(socket);
         System.out.println(
-            "\n(!) Jogador conectado ao servidor no endereço " + SERVER_ADDRESS +
+            "\n(!) Jogador conectado ao servidor no endereCo " + SERVER_ADDRESS +
             " e porta " + Servidor.PORT + ".\n");
 
         login();
@@ -242,7 +242,7 @@ public class Cliente implements Runnable {
 
     /**
      * Executa o login no sistema, enviando o login digitado para o servidor.
-     * A primeira mensagem que o servidor receber após um cliente conectar é então o login daquele cliente.
+     * A primeira mensagem que o servidor receber apos um cliente conectar e entao o login daquele cliente.
      */
     private void login() {
         System.out.print("DIGITE SEU NICKNAME DE HEROI: ");
@@ -254,7 +254,7 @@ public class Cliente implements Runnable {
 
     /**
      * Inicia o loop de envio e recebimento de mensagens.
-     * O loop é interrompido quando o usuário digitar "sair".
+     * O loop e interrompido quando o usuario digitar "sair".
      */
     private void messageLoop() {
         int escolha;
@@ -354,14 +354,14 @@ public class Cliente implements Runnable {
         
         }
 
-        System.out.println("\n\nd[x(]> Seu personagem foi de BERÇO - F no chat!");
+        System.out.println("\n\nd[x(]> Seu personagem foi de BERCO - F no chat!");
 
         System.exit(0);
         clientSocket.close();
     }
 
     /**
-     * Aguarda mensagens do servidor enquanto o socket não for fechado e o cliente não receber uma mensagem null.
+     * Aguarda mensagens do servidor enquanto o socket nao for fechado e o cliente nao receber uma mensagem null.
      */
     @Override
     public void run() {
