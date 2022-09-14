@@ -9,4 +9,4 @@
 
 Implementação de um RPG com múltiplos players conectados num servidor previamente configurado na porta 4000 e ip local.
 
-<iframe src="[url](https://www.youtube.com/watch?v=eV8tSaqTmbE)" title="description"></iframe>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)]([https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE](https://www.youtube.com/watch?v=eV8tSaqTmbE))
